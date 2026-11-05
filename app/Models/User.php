@@ -29,4 +29,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function rol()
+    {
+        return $this->belongsTo(Rol::class, 'rol_id');
+    }
+
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+    }
+
+    public function isAdministrador(){
+        return $this->rol_id == 1;
+    }
+
+    public function isCajaVenta()
+    {
+        return $this->rol_id == 2;
+    }
+
+    public function isVenta()
+    {
+        return $this->rol_id == 3;
+    }
 }
