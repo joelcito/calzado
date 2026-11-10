@@ -112,6 +112,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListadoFacturas', [FacturaController::class, 'ajaxListadoFacturas'])->name('factura.ajaxListadoFacturas');
         Route::post('/ajaxListadoClientesBusqueda', [FacturaController::class, 'ajaxListadoClientesBusqueda'])->name('factura.ajaxListadoClientesBusqueda');
         Route::post('/emitirRecibo', [FacturaController::class, 'emitirRecibo'])->name('factura.emitirRecibo');
+        Route::post('/ajaxFormularioEditarVenta', [FacturaController::class, 'ajaxFormularioEditarVenta'])->name('factura.ajaxFormularioEditarVenta');
+        Route::post('/guardarEdicionVenta', [FacturaController::class, 'guardarEdicionVenta'])->name('factura.guardarEdicionVenta');
         Route::get('/imprimeRecibo/{factura_id}', [FacturaController::class, 'imprimeRecibo']);
         Route::get('/imprimeReciboRollo/{factura_id}', [FacturaController::class, 'imprimeReciboRollo']);
         Route::post('/anularRecibo', [FacturaController::class, 'anularRecibo'])->name('factura.anularRecibo');

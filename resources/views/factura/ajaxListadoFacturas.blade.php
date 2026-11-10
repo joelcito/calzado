@@ -48,6 +48,9 @@
                         <a href="{{ url('factura/imprimeRecibo', [$fac->id]) }}" target="_blank"
                             class="btn btn-info btn-sm btn-icon tamanio_boton" title="Imprime Recibo"><i
                                 class="fa fa-file-pdf"></i></a>
+                        @if (is_null($fac->estado) && $fac->facturado == 'No' && $fac->sucursal_id == Auth::user()->sucursal_id && (Auth::user()->rol_id != 2 || $fac->usuario_creador_id == Auth::id()))
+                            <button type="button" class="btn btn-warning btn-sm btn-icon tamanio_boton" title="Editar venta" onclick="editarVenta({{ $fac->id }})"><i class="fa fa-edit"></i></button>
+                        @endif
                         <a href="{{ url('factura/imprimeReciboRollo', [$fac->id]) }}" target="_blank"
                             class="btn btn-primary btn-sm btn-icon tamanio_boton" title="Imprime Rollo"><i
                                 class="fa fa-file-pdf"></i></a>

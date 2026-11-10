@@ -11,11 +11,13 @@ use App\Models\Pago;
 use App\Models\Producto;
 use App\Models\Sucursal;
 use App\Models\User;
+use App\Utils\CuentaHermano;
 use App\Utils\Respuesta;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class FacturaController extends Controller
@@ -400,7 +402,7 @@ class FacturaController extends Controller
                 ->join('clientes', 'clientes.id', '=', 'facturas.cliente_id')
                 ->where('facturas.facturado', 'No');
 
-            if ($usuario->rol_id == 4) {
+            if ($usuario->rol_id == 2) {
                 $query->where('facturas.usuario_creador_id', $usuario->id);
             } else {
                 if (! is_null($request->input('buscar_cliente_id'))) {
@@ -451,6 +453,187 @@ class FacturaController extends Controller
         }
 
         return $data;
+    }
+
+    public function ajaxFormularioEditarVenta(Request $request): Respuesta
+    {
+        if (! $request->ajax()) {
+            return Respuesta::error(null, 'No existe');
+        }
+        $request->validate(['factura_id' => ['required', 'integer']]);
+        $factura = Factura::with('cliente', 'detalles.duenio', 'pagos')->findOrFail($request->factura_id);
+        $this->verificarEdicionVenta($factura);
+        $productos = Producto::with('duenio')->where('tipo', 'PRODUCTO')->where('control_stock', true)->orderBy('nombre')->get();
+        $pagado = $factura->pagos->where('estado', 'INGRESO')->sum('monto');
+        $version = $this->versionEdicionVenta($factura);
+
+        return Respuesta::success([
+            'formulario' => view('factura.ajaxFormularioEditarVenta', compact('factura', 'productos', 'pagado', 'version'))->render(),
+        ], 'Datos obtenidos correctamente');
+    }
+
+    private function verificarEdicionVenta(Factura $factura): void
+    {
+        $usuario = Auth::user();
+        abort_unless((int) $factura->sucursal_id === (int) $usuario->sucursal_id, 403, 'Edite la venta desde su sucursal.');
+        abort_if((int) $usuario->rol_id === 2 && (int) $factura->usuario_creador_id !== (int) $usuario->id, 403);
+        if ($factura->estado !== null || $factura->facturado !== 'No') {
+            throw ValidationException::withMessages(['venta' => 'Solo se pueden editar ventas vigentes sin factura fiscal.']);
+        }
+    }
+
+    private function versionEdicionVenta(Factura $factura): string
+    {
+        return hash('sha256', json_encode([
+            $factura->only(['id', 'total', 'descuento_adicional', 'estado', 'facturado']),
+            $factura->detalles->sortBy('id')->map(fn ($detalle) => $detalle->only(['id', 'producto_id', 'cantidad', 'precio', 'descuento', 'usuario_duenio_id']))->values()->all(),
+            $factura->pagos->sortBy('id')->map(fn ($pago) => $pago->only(['id', 'monto', 'estado', 'tipo_pago']))->values()->all(),
+        ], JSON_THROW_ON_ERROR));
+    }
+
+    public function guardarEdicionVenta(Request $request): Respuesta
+    {
+        if (! $request->ajax()) {
+            return Respuesta::error(null, 'No existe');
+        }
+        $datos = $request->validate([
+            'factura_id' => ['required', 'integer'],
+            'version' => ['required', 'string', 'size:64'],
+            'items' => ['required', 'array', 'min:1', 'max:200'],
+            'items.*.detalle_id' => ['nullable', 'integer'],
+            'items.*.producto_id' => ['required', 'integer'],
+            'items.*.cantidad' => ['required', 'numeric', 'min:0.01', 'max:9999999999.99', 'decimal:0,2'],
+        ]);
+        $usuario = Auth::user();
+
+        return DB::transaction(function () use ($datos, $usuario) {
+            $caja = Caja::where('sucursal_id', $usuario->sucursal_id)->where('estado', 'Abierta')->lockForUpdate()->first();
+            if (! $caja) {
+                throw ValidationException::withMessages(['venta' => 'Debe abrir una caja en su sucursal para editar la venta.']);
+            }
+            $factura = Factura::whereKey($datos['factura_id'])->lockForUpdate()->firstOrFail();
+            $this->verificarEdicionVenta($factura);
+            $factura->load('detalles', 'pagos');
+            if (! hash_equals($this->versionEdicionVenta($factura), $datos['version'])) {
+                throw ValidationException::withMessages(['venta' => 'La venta o sus pagos cambiaron. Cierre y vuelva a abrir el modal.']);
+            }
+            $originales = $factura->detalles->keyBy('id');
+            $ids = $originales->pluck('producto_id')->merge(collect($datos['items'])->pluck('producto_id'))->unique()->sort();
+            $productos = Producto::withTrashed()->whereIn('id', $ids)->orderBy('id')->lockForUpdate()->get()->keyBy('id');
+            $movimientos = Movimiento::whereIn('detalle_id', $originales->keys())->lockForUpdate()->get();
+            $lineas = [];
+            $usados = [];
+            $cantidades = [];
+            $subtotal = 0;
+            foreach ($datos['items'] as $item) {
+                $detalleId = $item['detalle_id'] ?? null;
+                $detalle = $detalleId ? $originales->get($detalleId) : null;
+                $producto = $productos->get($item['producto_id']);
+                if (! $producto || ($detalleId && (! $detalle || isset($usados[$detalleId]) || (int) $detalle->producto_id !== (int) $item['producto_id']))) {
+                    throw ValidationException::withMessages(['items' => 'Revise los productos de esta venta.']);
+                }
+                if ((! $detalle && ($producto->trashed() || $producto->tipo !== 'PRODUCTO' || ! $producto->control_stock)) || ($producto->trashed() && $item['cantidad'] > $detalle->cantidad)) {
+                    throw ValidationException::withMessages(['items' => 'El producto '.$producto->nombre.' no está disponible para agregar.']);
+                }
+                if ($detalleId) {
+                    $usados[$detalleId] = true;
+                }
+                $cantidad = (int) round($item['cantidad'] * 100);
+                $precio = (int) round(($detalle ? $detalle->precio : $producto->precio_venta) * 100);
+                $importeBruto = round($cantidad * $precio / 100);
+                if ($importeBruto > 999999999999 || $importeBruto < 0) {
+                    throw ValidationException::withMessages(['items' => 'La cantidad del producto '.$producto->nombre.' supera el importe permitido.']);
+                }
+                $bruto = (int) $importeBruto;
+                $descuento = $detalle ? (int) round($detalle->descuento * 100) : 0;
+                if ($bruto < $descuento || $bruto > 999999999999) {
+                    throw ValidationException::withMessages(['items' => 'Revise la cantidad y el descuento del producto '.$producto->nombre.'.']);
+                }
+                $importe = $bruto - $descuento;
+                $subtotal += $importe;
+                $cantidades[$producto->id] = ($cantidades[$producto->id] ?? 0) + $cantidad;
+                $lineas[] = compact('detalle', 'producto', 'cantidad', 'precio', 'bruto', 'descuento', 'importe');
+            }
+            $total = $subtotal - (int) round($factura->descuento_adicional * 100);
+            $pagado = (int) round($factura->pagos->where('estado', 'INGRESO')->sum('monto') * 100);
+            if ($total < 0 || $total > 999999999999) {
+                throw ValidationException::withMessages(['items' => 'Revise las cantidades y el descuento general de la venta.']);
+            }
+            if ($total < $pagado) {
+                throw ValidationException::withMessages(['items' => 'El nuevo total no puede ser menor a los '.number_format($pagado / 100, 2).' Bs ya cobrados. Primero debe resolver la devolución del excedente.']);
+            }
+            foreach ($cantidades as $productoId => $cantidad) {
+                if (! $productos[$productoId]->control_stock && ! $movimientos->contains('producto_id', $productoId)) {
+                    continue;
+                }
+                $stock = (new Movimiento)->cantidaDisponile($factura->sucursal_id, $productoId);
+                $reservado = $movimientos->where('producto_id', $productoId)->sum('salida') - $movimientos->where('producto_id', $productoId)->sum('ingreso');
+                if ($cantidad > (int) round(($stock + $reservado) * 100)) {
+                    throw ValidationException::withMessages(['items' => 'Stock insuficiente de '.$productos[$productoId]->nombre.'. Disponible para esta venta: '.number_format($stock + $reservado, 2)]);
+                }
+            }
+            $cuentas = new CuentaHermano;
+            $inicio = now()->startOfDay()->format('Y-m-d H:i:s');
+            $fin = now()->format('Y-m-d H:i:s');
+            $antes = $cuentas->obtener($factura->sucursal_id, $inicio, $fin)['resumen'];
+            Movimiento::whereIn('id', $movimientos->pluck('id'))->update(['usuario_eliminador_id' => $usuario->id]);
+            Movimiento::whereIn('id', $movimientos->pluck('id'))->delete();
+            foreach ($originales as $detalle) {
+                if (! isset($usados[$detalle->id])) {
+                    $detalle->usuario_eliminador_id = $usuario->id;
+                    $detalle->save();
+                    $detalle->delete();
+                }
+            }
+            foreach ($lineas as $linea) {
+                $producto = $linea['producto'];
+                $detalle = $linea['detalle'];
+                if (! $detalle) {
+                    $detalle = new Detalle;
+                    $detalle->usuario_creador_id = $usuario->id;
+                    $detalle->factura_id = $factura->id;
+                    $detalle->sucursal_id = $factura->sucursal_id;
+                    $detalle->producto_id = $producto->id;
+                    $detalle->usuario_duenio_id = $producto->usuario_duenio_id;
+                    $detalle->nombre_producto = $producto->nombre;
+                    $detalle->precio_compra = $producto->precio_compra;
+                    $detalle->fecha = $factura->fecha;
+                }
+                $detalle->usuario_modificador_id = $usuario->id;
+                $detalle->cantidad = $linea['cantidad'] / 100;
+                $detalle->precio = $linea['precio'] / 100;
+                $detalle->descuento = $linea['descuento'] / 100;
+                $detalle->total = $linea['bruto'] / 100;
+                $detalle->importe = $linea['importe'] / 100;
+                $detalle->estado = 'Finalizado';
+                $detalle->save();
+                if ($producto->control_stock || $movimientos->contains('producto_id', $producto->id)) {
+                    Movimiento::create([
+                        'usuario_creador_id' => $usuario->id, 'sucursal_id' => $factura->sucursal_id,
+                        'producto_id' => $producto->id, 'detalle_id' => $detalle->id,
+                        'salida' => $detalle->cantidad, 'ingreso' => 0, 'fecha' => $factura->fecha, 'descripcion' => 'VENTA',
+                    ]);
+                }
+            }
+            $factura->total = $total / 100;
+            $factura->monto_total_subjeto_iva = $total / 100;
+            $factura->estado_pago = $pagado >= $total ? 'PAGADO' : 'DEUDA';
+            $factura->usuario_modificador_id = $usuario->id;
+            $factura->save();
+            $despues = $cuentas->obtener($factura->sucursal_id, $inicio, $fin)['resumen'];
+            foreach ($despues as $id => $fila) {
+                if ($id === 0) {
+                    continue;
+                }
+                foreach ($fila['medios'] as $medio => $saldo) {
+                    if ($saldo < min(0, $antes->get($id)['medios'][$medio] ?? 0)) {
+                        throw ValidationException::withMessages(['items' => 'El cambio dejaría sin respaldo una salida de '.$fila['hermano'].' en '.$medio.'. Revise sus movimientos antes de editar.']);
+                    }
+                }
+            }
+
+            return Respuesta::success(['total' => $total / 100, 'saldo' => ($total - $pagado) / 100], 'Venta actualizada correctamente.');
+        });
     }
 
     public function anularRecibo(Request $request)

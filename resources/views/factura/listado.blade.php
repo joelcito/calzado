@@ -11,6 +11,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 @endsection
 @section('content')
+    <div class="modal fade" id="modalEditarVenta" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content">
+            <div class="modal-header"><h3 class="fw-bold">EDITAR VENTA</h3><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+            <div class="modal-body" id="contenido_editar_venta"></div>
+        </div></div>
+    </div>
 
     <!--begin::Modal PAGO DEUDAS-->
     <div class="modal fade" id="modalFacturacion" tabindex="-1" aria-hidden="true">
@@ -191,6 +197,88 @@
 
             // $("#facturacion_datos_tipo_metodo_pago, #facturacion_datos_tipo_moneda, #tipo_documento").select2();
 
+        });
+
+        function errorEdicionVenta(xhr) {
+            const errores = xhr.responseJSON?.errors;
+            return errores ? Object.values(errores).flat().join('\n') : (xhr.responseJSON?.message || 'No se pudo procesar la venta.');
+        }
+
+        let solicitudEditarVenta;
+        function editarVenta(facturaId) {
+            if (solicitudEditarVenta) solicitudEditarVenta.abort();
+            $('#contenido_editar_venta').text('Cargando venta...');
+            $('#modalEditarVenta').modal('show');
+            solicitudEditarVenta = $.ajax({
+                url: "{{ route('factura.ajaxFormularioEditarVenta') }}", type: 'POST', data: { factura_id: facturaId },
+                success: function(resultado) {
+                    if (!resultado.estado) { $('#contenido_editar_venta').text(resultado.mensaje); return; }
+                    $('#contenido_editar_venta').html(resultado.data.formulario);
+                    recalcularEdicionVenta();
+                },
+                error: function(xhr, estado) { if (estado !== 'abort') $('#contenido_editar_venta').text(errorEdicionVenta(xhr)); }
+            });
+        }
+
+        function agregarItemEdicionVenta() {
+            const opcion = $('#producto_edicion option:selected');
+            const productoId = opcion.val();
+            if (!productoId) return;
+            const existente = $('#items_edicion_venta tr').filter(function() { return String($(this).attr('data-producto')) === String(productoId); }).first();
+            if (existente.length) {
+                const cantidad = existente.find('.cantidad_edicion');
+                cantidad.val((Number(cantidad.val()) + 1).toFixed(2));
+            } else {
+                const precio = Math.round(Number(opcion.attr('data-precio')) * 100);
+                const fila = $('<tr>').attr({ 'data-producto': productoId, 'data-precio': precio, 'data-descuento': 0 });
+                fila.append($('<td>').text(opcion.attr('data-nombre')), $('<td>').text(opcion.attr('data-duenio') || 'Sin asignar'), $('<td>').text((precio / 100).toFixed(2)));
+                fila.append($('<td>').append($('<input>', { type: 'number', class: 'cantidad_edicion form-control form-control-sm', min: '0.01', max: '9999999999.99', step: '0.01', required: true, value: 1 })));
+                fila.append($('<td>').text('0.00'), $('<td>', { class: 'importe_edicion' }));
+                fila.append($('<td>').append($('<button>', { type: 'button', class: 'quitar_edicion btn btn-sm btn-icon btn-danger', title: 'Quitar producto' }).append($('<i>', { class: 'fa fa-trash' }))));
+                $('#items_edicion_venta').append(fila);
+            }
+            $('#producto_edicion').val('');
+            recalcularEdicionVenta();
+        }
+
+        function recalcularEdicionVenta() {
+            let subtotal = 0;
+            let invalido = false;
+            $('#items_edicion_venta tr').each(function() {
+                const cantidad = Math.round(Number($(this).find('.cantidad_edicion').val()) * 100);
+                const importe = Math.round(cantidad * Number($(this).attr('data-precio')) / 100) - Number($(this).attr('data-descuento'));
+                if (cantidad <= 0 || importe < 0 || !Number.isFinite(importe)) invalido = true;
+                subtotal += importe;
+                $(this).find('.importe_edicion').text((importe / 100).toFixed(2));
+            });
+            const total = subtotal - Math.round(Number($('#edicion_descuento').val()) * 100);
+            const pagado = Math.round(Number($('#edicion_pagado').val()) * 100);
+            $('#edicion_total').text((total / 100).toFixed(2));
+            $('#edicion_saldo').text(((total - pagado) / 100).toFixed(2));
+            const aviso = total < pagado ? 'El total no puede ser menor a lo ya cobrado.' : (invalido || !$('#items_edicion_venta tr').length || total < 0 ? 'Revise las cantidades. La venta debe tener al menos un producto.' : '');
+            $('#edicion_aviso').toggleClass('d-none', !aviso).text(aviso);
+            $('#boton_guardar_edicion').prop('disabled', Boolean(aviso));
+        }
+
+        $(document).on('input', '#items_edicion_venta .cantidad_edicion', recalcularEdicionVenta);
+        $(document).on('click', '#items_edicion_venta .quitar_edicion', function() { $(this).closest('tr').remove(); recalcularEdicionVenta(); });
+        $(document).on('submit', '#formulario_editar_venta', function(evento) {
+            evento.preventDefault();
+            if (!this.reportValidity()) return;
+            const items = $('#items_edicion_venta tr').map(function() {
+                return { detalle_id: $(this).attr('data-detalle') || null, producto_id: $(this).attr('data-producto'), cantidad: $(this).find('.cantidad_edicion').val() };
+            }).get();
+            $('#boton_guardar_edicion').prop('disabled', true).text('Guardando...');
+            $.ajax({
+                url: "{{ route('factura.guardarEdicionVenta') }}", type: 'POST',
+                data: { factura_id: $(this).find('[name=factura_id]').val(), version: $(this).find('[name=version]').val(), items: items },
+                success: function(resultado) {
+                    if (resultado.estado) { $('#modalEditarVenta').modal('hide'); ajaxListado(); }
+                    else Swal.fire({ icon: 'error', text: resultado.mensaje });
+                },
+                error: function(xhr) { Swal.fire({ icon: 'error', text: errorEdicionVenta(xhr) }); },
+                complete: function() { $('#boton_guardar_edicion').text('Guardar cambios'); recalcularEdicionVenta(); }
+            });
         });
 
         function ajaxListado() {
@@ -500,7 +588,7 @@
                 factura_id: factura
             }
             $.ajax({
-                url: "{{ route('factura.ajaxFacturaVenta') }}",
+                url: "{{ url('factura/ajaxFacturaVenta') }}",
                 method: "POST",
                 data: datos,
                 success: function(resultado) {
@@ -524,7 +612,7 @@
                 unidad: select.value
             }
             $.ajax({
-                url: "{{ route('factura.cambiarUnidaMedida') }}",
+                url: "{{ url('factura/cambiarUnidaMedida') }}",
                 method: "POST",
                 data: datos,
                 success: function(resultado) {
@@ -555,7 +643,7 @@
                 codigoActividad: codigoActividad
             }
             $.ajax({
-                url: "{{ route('factura.cambiarProductoServicio') }}",
+                url: "{{ url('factura/cambiarProductoServicio') }}",
                 method: "POST",
                 data: datos,
                 success: function(resultado) {
@@ -579,7 +667,7 @@
                 let datos = $('#formularioFacturacion').serializeArray();
 
                 $.ajax({
-                url: "{{ route('factura.emitirFactura') }}",
+                url: "{{ url('factura/emitirFactura') }}",
                 method: "POST",
                 data: datos,
                 success: function(data) {
