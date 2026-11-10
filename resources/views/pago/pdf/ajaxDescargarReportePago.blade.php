@@ -24,7 +24,8 @@
     </style>
 </head>
 <body>
-    <h2>Reporte de Pagos / Movimientos</h2>
+    @include('partials.cabeceraDocumento', ['tituloDocumento' => 'REPORTE DE PAGOS / MOVIMIENTOS'])
+
 
     <table>
         <thead>

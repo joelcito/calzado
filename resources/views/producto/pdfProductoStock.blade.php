@@ -63,21 +63,22 @@
 @endphp
 
 <body>
-    <div style="position: relative; width: 100%; margin-bottom: 1px; height: 90px;">
-        <!-- Logo a la izquierda -->
-        {{-- <div style="position: absolute; top: 0; left: 0;">
-            <img src="{{ $base64 }}" alt="Logo" width="90">
-        </div> --}}
+    <table style="width: 100%; margin-bottom: 14px; border-collapse: collapse; border-bottom: 1px solid #17354f;">
+    <tr>
+        <td style="width: 80px; padding: 0 12px 8px 0; border: 0; background: white; vertical-align: middle;">
+            @include('partials.logoDocumento', ['soloImagen' => true, 'alto' => 70])
+        </td>
+        <td style="padding: 0 0 8px; border: 0; background: white; text-align: center; vertical-align: middle; color: #17354f;">
 
-        <!-- Texto completamente centrado -->
-        <div style="text-align: center;">
             <h2 style="margin: 0; font-size: 11pt;">
                 STOCK - PRODUCTOS POR SUCURSAL
             </h2>
             <p style="margin: 2pt 0; font-size: 10pt;">Fecha de Impresion {{ date('d/m/Y H:i:s') }}</p>
             <p style="margin: 2pt 0; font-size: 10pt;"><strong>Sucursal:</strong> {{ $sucursal->nombre }}</p>
-        </div>
-    </div>
+
+        </td>
+    </tr>
+</table>
 
     <table>
         <thead>

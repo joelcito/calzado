@@ -4,7 +4,7 @@
 <html lang="en">
 	<!--begin::Head-->
 	<head>
-		<title>SISTEMA DE CONTROL DE INVENTARIOS</title>
+		<title>SISTEMA DE CONTROL DE VENTAS</title>
 		<meta charset="utf-8" />
         @yield('metadatos')
         <meta name="description" content="Sistema de control de inventario moderno y eficiente, ideal para empresas en Bolivia. Gestiona productos, stock, proveedores y ventas en tiempo real. Compatible con normativas locales y con facturación electrónica integrada. Solución completa para pymes, emprendimientos y grandes negocios que buscan automatizar su gestión de inventario y mejorar la rentabilidad.">
@@ -16,7 +16,7 @@
 		<meta property="og:url" content="http://importadoraclick.com/" />
 		<meta property="og:site_name" content="Sistema de Inventario en Línea" />
 		<link rel="canonical" href="http://importadoraclick.com/" />
-        <link rel="shortcut icon" href="{{ asset('assets/img/Logo_Click_Icono.png') }}" />
+        <link rel="shortcut icon" href="{{ asset('assets/img/logo_calzado.png') }}" />
 		<!--begin::Fonts(mandatory for all pages)-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
 		<!--end::Fonts-->
@@ -77,7 +77,7 @@
 								<div class="row mt-4">
 									<div class="col-md-12">
                                         <center>
-                                            <img alt="Logo" src="{{asset('assets/img/Logo_Click_G.jpeg')}}" width="80%" />
+                                            <img alt="Logo" src="{{asset('assets/img/logo_calzado.png')}}" width="50%" />
                                         </center>
 									</div>
                                     <!--

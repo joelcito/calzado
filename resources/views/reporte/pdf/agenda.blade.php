@@ -35,8 +35,8 @@
 </head>
 
 <body>
+    @include('partials.cabeceraDocumento', ['tituloDocumento' => 'REPORTE DE AGENDA'])
 
-    <h2>REPORTE DE AGENDA</h2>
 
     <table>
 

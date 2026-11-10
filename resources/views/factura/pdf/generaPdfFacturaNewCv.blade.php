@@ -212,7 +212,7 @@
         <tr>
             <td>
                 {{-- <img src="{{ public_path('assets/img') . '/' . $empresa->logo }}" alt="" width="100%"><br> --}}
-                <img src="{{ public_path('assets/img/lop.jpg') }}" alt="" width="100%"><br>
+                @include('partials.logoDocumento', ['soloImagen' => true, 'alto' => 90])<br>
             </td>
         </tr>
     </table>

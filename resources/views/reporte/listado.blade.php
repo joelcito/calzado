@@ -37,7 +37,7 @@
 
             <div class="row">
 
-                <div class="col-md-3 mb-3">
+                <div class="col-md-2 mb-3">
 
                     <label>
                         Fecha inicio
@@ -49,7 +49,7 @@
                 </div>
 
 
-                <div class="col-md-3 mb-3">
+                <div class="col-md-2 mb-3">
 
                     <label>
                         Fecha fin
@@ -60,7 +60,7 @@
                 </div>
 
 
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
 
                     <label>
                         Sucursal
@@ -85,6 +85,16 @@
                 </div>
 
 
+                <div class="col-md-3 mb-3">
+                    <label>Dueño de los productos / dinero</label>
+                    <select id="usuario_duenio_id" class="form-control">
+                        <option value="">TODOS</option>
+                        @foreach ($duenios as $duenio)
+                            <option value="{{ $duenio->id }}">{{ $duenio->name ?: trim($duenio->nombres.' '.$duenio->ap_paterno.' '.$duenio->ap_materno) }}</option>
+                        @endforeach
+                        <option value="0">SIN ASIGNAR</option>
+                    </select>
+                </div>
                 <div class="col-md-2 mb-3">
 
                     <label>&nbsp;</label>
@@ -269,7 +279,7 @@
         {{-- INVENTARIO --}}
         {{-- ===================================================== --}}
 
-        <div class="col-lg-4 col-md-6 mb-4">
+        {{-- <div class="col-lg-4 col-md-6 mb-4">
 
             <div class="card shadow-sm border-0 h-100">
 
@@ -336,7 +346,7 @@
 
             </div>
 
-        </div>
+        </div> --}}
 
 
 
@@ -344,7 +354,7 @@
         {{-- KARDEX --}}
         {{-- ===================================================== --}}
 
-        <div class="col-lg-4 col-md-6 mb-4">
+        {{-- <div class="col-lg-4 col-md-6 mb-4">
 
             <div class="card shadow-sm border-0 h-100">
 
@@ -371,11 +381,6 @@
                     </div>
 
                     <hr>
-
-
-                    {{-- =============================================== --}}
-                    {{-- PRODUCTO --}}
-                    {{-- =============================================== --}}
 
                     <div class="form-group mb-3">
 
@@ -404,11 +409,6 @@
                         </select>
 
                     </div>
-
-
-                    {{-- =============================================== --}}
-                    {{-- BOTONES --}}
-                    {{-- =============================================== --}}
 
                     <div class="row">
 
@@ -443,7 +443,7 @@
 
             </div>
 
-        </div>
+        </div> --}}
 
 
 
@@ -652,7 +652,8 @@
 
         let parametros =
             '?fecha_inicio=' + encodeURIComponent(fechaInicio) +
-            '&fecha_fin=' + encodeURIComponent(fechaFin);
+            '&fecha_fin=' + encodeURIComponent(fechaFin) +
+            '&usuario_duenio_id=' + encodeURIComponent($('#usuario_duenio_id').val());
 
 
         if (sucursalId) {
@@ -692,6 +693,7 @@
         );
 
         $('#sucursal_id').val('');
+        $('#usuario_duenio_id').val('');
 
     });
 

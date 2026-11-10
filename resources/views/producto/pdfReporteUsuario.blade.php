@@ -56,10 +56,6 @@
 @php
     use Carbon\Carbon;
 
-    $path = public_path('img/logo_deportivo.png');
-    $type = pathinfo($path, PATHINFO_EXTENSION);
-    $data = file_get_contents($path);
-    $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
 @endphp
 
 <body>
@@ -69,21 +65,22 @@
         <p><strong>Producto:</strong> {{ $producto->nombre }}</p>
     </div> --}}
 
-    <div style="position: relative; width: 100%; margin-bottom: 1px; height: 90px;">
-        <!-- Logo a la izquierda -->
-        <div style="position: absolute; top: 0; left: 0;">
-            <img src="{{ $base64 }}" alt="Logo" width="90">
-        </div>
+    <table style="width: 100%; margin-bottom: 14px; border-collapse: collapse; border-bottom: 1px solid #17354f;">
+    <tr>
+        <td style="width: 80px; padding: 0 12px 8px 0; border: 0; background: white; vertical-align: middle;">
+            @include('partials.logoDocumento', ['soloImagen' => true, 'alto' => 70])
+        </td>
+        <td style="padding: 0 0 8px; border: 0; background: white; text-align: center; vertical-align: middle; color: #17354f;">
 
-        <!-- Texto completamente centrado -->
-        <div style="text-align: center;">
             <h2 style="margin: 0; font-size: 11pt;">
                 TOTAL {{ strtoupper($operativa) }}S DE PRODUCTOS POR SUCURSAL - USUARIO
             </h2>
             <p style="margin: 2pt 0; font-size: 10pt;">Desde {{ Carbon::parse($fecha_ini)->format('d/m/Y') }} hasta {{ Carbon::parse($fecha_fin)->format('d/m/Y') }}</p>
             <p style="margin: 2pt 0; font-size: 10pt;"><strong>Producto:</strong> {{ $producto->nombre }}</p>
-        </div>
-    </div>
+
+        </td>
+    </tr>
+</table>
 
     @foreach ($sucursales as $su)
         <div class="sucursal-title">{{ $su->nombre }}</div>

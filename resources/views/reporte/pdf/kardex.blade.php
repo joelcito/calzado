@@ -69,10 +69,8 @@
 </head>
 
 <body>
+    @include('partials.cabeceraDocumento', ['tituloDocumento' => 'KARDEX DE PRODUCTO'])
 
-    <h2>
-        KARDEX DE PRODUCTO
-    </h2>
 
 
     <table class="datos-producto">

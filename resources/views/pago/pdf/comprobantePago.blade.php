@@ -121,27 +121,28 @@
     </style>
 </head>
 <body>
-    <div style="position: relative; width: 100%; margin-bottom: 1px; height: 90px;">
-        <!-- Logo a la izquierda -->
-        <div style="position: absolute; top: 0; left: 0;">
-            <img src="" alt="Logo" width="90">
-        </div>
+    <table style="width: 100%; margin-bottom: 12px; border-collapse: collapse; border-bottom: 1px solid #17354f;">
+    <tr>
+        <td style="width: 62px; padding: 0 10px 8px 0; border: 0; vertical-align: middle;">
+            @include('partials.logoDocumento', ['soloImagen' => true, 'alto' => 54])
+        </td>
+        <td style="border: 0; padding-bottom: 8px; text-align: right; vertical-align: middle; color: #17354f;">
 
-        <!-- Texto completamente centrado -->
-        <div style="text-align: center;">
             <h2 style="margin: 0; font-size: 13pt;">
                 COMPROBANTE DE {{ $pago->estado }}
             </h2>
             <p style="margin: 1pt 0; font-size: 11pt;">Fecha: {{ $pago->fecha }}</p>
             {{-- <p style="margin: 1pt 0; font-size: 11pt;">Telefono: 77299506 - 22846050</p> --}}
-        </div>
-        <div style="text-align: end;">
+
+
             <p style="font-size: 10pt;">Vendedor: {{ $pago->usuario->name }}</p>
             @if ($pago->duenio)
                 <p style="font-size: 10pt;">Hermano / dueño del dinero: {{ $pago->duenio->name }}</p>
             @endif
-        </div>
-    </div>
+
+        </td>
+    </tr>
+</table>
     {{-- <div class="section-title">Señor(es): </div> --}}
     <table class="table">
         <thead>

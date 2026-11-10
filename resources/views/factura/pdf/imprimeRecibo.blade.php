@@ -108,7 +108,7 @@
 <body>
 
     <div class="header">
-        {{-- <img class="logo" src="{{ $base64 }}" alt="Logo"> --}}
+        @include('partials.logoDocumento', ['soloImagen' => true, 'clase' => 'logo', 'alto' => 76])
         <div class="header-left">
             <h2>{{ 'VENTA N°' }} {{ $factura->numero_recibo }}</h2>
             <p>Fecha de venta: {{ $factura->fecha }}</p>

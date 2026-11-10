@@ -82,20 +82,12 @@
 </head>
 
 <body>
-
-    <h2>
-        REPORTE DE FLUJO DE EFECTIVO
-    </h2>
-
-    <div class="fecha-generacion">
-        Generado:
-        {{ now()->format('d/m/Y H:i') }}
-    </div>
+    @include('partials.cabeceraDocumento', ['tituloDocumento' => 'REPORTE DE FLUJO DE EFECTIVO', 'detalleDocumento' => $filtros])
 
 
     {{-- RESUMEN --}}
 
-    <table class="resumen">
+    <p>SALDO ANTERIOR: Bs {{ number_format($saldoAnterior, 2) }}. Las aperturas de caja no se suman nuevamente.</p><table class="resumen">
 
         <tr>
 
@@ -116,7 +108,7 @@
             </td>
 
             <td>
-                SALDO<br>
+                DISPONIBLE FINAL<br>
 
                 <span class="saldo">
                     Bs {{ number_format($saldo, 2) }}
@@ -128,7 +120,7 @@
     </table>
 
 
-    {{-- DETALLE --}}
+<p>@foreach ($medios as $medio => $monto) {{ $medio }} disponible: Bs {{ number_format($monto, 2) }} &nbsp; @endforeach</p>    {{-- DETALLE --}}
 
     <table class="detalle">
 
@@ -164,7 +156,7 @@
                     Sucursal
                 </th>
 
-                <th width="10%">
+                <th>Dueño</th><th width="10%">
                     Monto
                 </th>
 
@@ -227,7 +219,7 @@
                     {{ $dato->sucursal }}
                 </td>
 
-                <td class="numero">
+                <td>{{ $dato->duenio }}</td><td class="numero">
 
                     {{ number_format(
                     $dato->monto,
@@ -242,7 +234,7 @@
 
             <tr>
 
-                <td colspan="8" class="centro">
+                <td colspan="9" class="centro">
 
                     No existen movimientos
                     en el periodo seleccionado.

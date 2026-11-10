@@ -67,26 +67,8 @@
 </head>
 
 <body>
-
-    <h2>
-        REPORTE DE UTILIDADES
-    </h2>
-
-    <div class="fecha">
-
-        Desde:
-        <strong>
-            {{ $request->fecha_inicio ?? '' }}
-        </strong>
-
-        &nbsp;&nbsp;
-
-        Hasta:
-        <strong>
-            {{ $request->fecha_fin ?? '' }}
-        </strong>
-
-    </div>
+    @include('partials.cabeceraDocumento', ['tituloDocumento' => 'REPORTE DE UTILIDADES', 'detalleDocumento' => $filtros])
+    <p>Utilidad bruta = venta neta con descuentos menos costo. No representa dinero cobrado ni descuenta salidas personales.</p>
 
 
     {{-- ==========================================
@@ -174,7 +156,7 @@
 
                 <th>Tipo</th>
 
-                <th>Sucursal</th>
+                <th>Sucursal</th><th>Dueño</th>
 
                 <th>Cant.</th>
 
@@ -232,7 +214,7 @@
                     {{ $dato->sucursal }}
                 </td>
 
-                <td class="text-right">
+                <td>{{ $dato->duenio }}</td><td class="text-right">
                     {{ number_format($dato->cantidad, 2) }}
                 </td>
 
@@ -273,7 +255,7 @@
 
             <tr class="total">
 
-                <td colspan="11" class="text-right">
+                <td colspan="12" class="text-right">
 
                     TOTALES
 

@@ -77,6 +77,9 @@
 </head>
 <body>
     <header>
+        <div style="position: absolute; left: 0; top: 0; line-height: 1;">
+            @include('partials.logoDocumento', ['soloImagen' => true, 'alto' => 58])
+        </div>
         <table style="width:100%">
             <tr>
                 <td style="text-align:center; font-family: 'Times New Roman', Times, serif; font-size:12px; line-height:100%">

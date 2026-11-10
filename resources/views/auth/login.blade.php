@@ -4,7 +4,7 @@
 
 <head>
     <base href="../../../" />
-    <title>INVENTARIO | BOLIVIA</title>
+    <title>VENTAS | BOLIVIA</title>
     <meta charset="utf-8" />
     <meta name="description"
         content="El sistema de facturación en línea más avanzado, diseñado para adaptarse a las necesidades de empresas en Bolivia y confiado por miles de usuarios. Incluye gestión completa de facturas, múltiples métodos de pago, soporte para impuestos locales y compatibilidad con facturación electrónica según las normativas bolivianas. Ideal para pymes, emprendedores y grandes empresas que buscan optimizar su gestión administrativa. Obtén acceso ahora y disfruta de la facilidad de factura." />
@@ -18,7 +18,7 @@
     <meta property="og:url" content="http://importadoraclick.com/" />
     <meta property="og:site_name" content="Sistema de Inventario en Línea" />
     <link rel="canonical" href="http://importadoraclick.com/" />
-    <link rel="shortcut icon" href="{{ asset('assets/img/Logo_Click_Icono.png') }}" />
+    <link rel="shortcut icon" href="{{ asset('assets/img/logo_calzado.png') }}" />
     <!--begin::Fonts(mandatory for all pages)-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <!--end::Fonts-->
@@ -75,7 +75,7 @@
                 <!--begin::Aside-->
                 <div class="d-flex flex-center flex-lg-start flex-column">
                     <!--begin::Logo-->
-                    <img alt="Logo" src="{{ asset('assets/img/Logo_Click_Transparente.png') }}" width="80%" />
+                    <img alt="Logo" src="{{ asset('assets/img/logo_calzado.png') }}" width="80%" />
                     <!--end::Logo-->
                     <!--begin::Title-->
                     <br>

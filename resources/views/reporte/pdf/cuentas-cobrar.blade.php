@@ -51,8 +51,8 @@
 </head>
 
 <body>
-
-    <h2>CUENTAS POR COBRAR</h2>
+    @include('partials.cabeceraDocumento', ['tituloDocumento' => 'CUENTAS POR COBRAR', 'detalleDocumento' => $filtros])
+<p>Ventas del período con saldo pendiente al cierre de la fecha fin. Pagos repartidos por dueño.</p>
 
     <table>
 
@@ -65,7 +65,7 @@
                 <th>Documento</th>
                 <th>Cliente</th>
                 <th>Celular</th>
-                <th>Sucursal</th>
+                <th>Sucursal</th><th>Dueño</th>
                 <th>Total</th>
                 <th>Pagado</th>
                 <th>Saldo</th>
@@ -114,7 +114,7 @@
                     {{ $dato->sucursal }}
                 </td>
 
-                <td class="numero">
+                <td>{{ $dato->duenio }}</td><td class="numero">
                     {{ number_format($dato->total,2) }}
                 </td>
 
@@ -136,7 +136,7 @@
 
             <tr class="total">
 
-                <td colspan="6" class="numero">
+                <td colspan="7" class="numero">
                     TOTALES
                 </td>
 

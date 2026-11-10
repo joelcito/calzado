@@ -64,14 +64,7 @@
 </head>
 
 <body>
-
-    <div class="titulo">
-        REPORTE DE VENTAS
-    </div>
-
-    <div class="subtitulo">
-        Generado: {{ now()->format('d/m/Y H:i') }}
-    </div>
+    @include('partials.cabeceraDocumento', ['tituloDocumento' => 'REPORTE DE VENTAS', 'detalleDocumento' => $filtros])
 
 
     <table>
@@ -92,7 +85,7 @@
 
                 <th width="12%">Sucursal</th>
 
-                <th width="10%">Pago</th>
+                <th>Dueño</th><th width="10%">Pago</th>
 
                 <th width="9%">Estado</th>
 
@@ -137,7 +130,7 @@
                     {{ $dato->sucursal }}
                 </td>
 
-                <td class="text-center">
+                <td>{{ $dato->duenio }}</td><td class="text-center">
                     {{ $dato->estado_pago }}
                 </td>
 
@@ -154,7 +147,7 @@
             @empty
 
             <tr>
-                <td colspan="9" class="text-center">
+                <td colspan="10" class="text-center">
                     No existen registros.
                 </td>
             </tr>
@@ -168,7 +161,7 @@
 
             <tr>
 
-                <td colspan="8" class="text-right total">
+                <td colspan="9" class="text-right total">
 
                     TOTAL Bs
 

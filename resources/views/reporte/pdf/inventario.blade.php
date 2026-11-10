@@ -47,8 +47,8 @@
 </head>
 
 <body>
+    @include('partials.cabeceraDocumento', ['tituloDocumento' => 'REPORTE DE INVENTARIO'])
 
-    <h2>REPORTE DE INVENTARIO</h2>
     <table>
         <thead>
             <tr>

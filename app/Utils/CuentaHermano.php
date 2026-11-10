@@ -57,6 +57,7 @@ class CuentaHermano
         $movimientos = collect();
         $ventas = [];
         $saldos = [];
+        $vendidos = [];
         $nombres = [0 => 'Sin asignar'];
         $crear = function (int $id) use (&$resumen, &$nombres): void {
             if (! isset($resumen[$id])) {
@@ -82,10 +83,11 @@ class CuentaHermano
                 $pesos[$id] = ($pesos[$id] ?? 0) + max(0, (int) round($detalle->importe * 100));
             }
             if (array_sum($pesos) === 0) {
-                $pesos = [0 => 1];
+                $pesos = array_fill_keys(array_keys($pesos) ?: [0], 1);
             }
             $ventas[$factura->id] = $factura;
             $saldos[$factura->id] = self::repartir(max(0, (int) round($factura->total * 100)), $pesos);
+            $vendidos[$factura->id] = $saldos[$factura->id];
             if ($factura->fecha >= $inicio) {
                 foreach ($saldos[$factura->id] as $id => $monto) {
                     $crear($id);
@@ -156,6 +158,18 @@ class CuentaHermano
             }
         }
 
-        return ['resumen' => collect($resumen), 'movimientos' => $movimientos->sortByDesc('fecha')->values()];
+        $detalleVentas = collect();
+        foreach ($vendidos as $facturaId => $importes) {
+            foreach ($importes as $id => $importe) {
+                $detalleVentas->push([
+                    'factura_id' => $facturaId, 'hermano_id' => $id,
+                    'hermano' => $nombres[$id] ?? 'Hermano #'.$id,
+                    'vendido' => $importe, 'cobrado' => $importe - $saldos[$facturaId][$id],
+                    'pendiente' => $saldos[$facturaId][$id],
+                ]);
+            }
+        }
+
+        return ['resumen' => collect($resumen), 'movimientos' => $movimientos->sortByDesc('fecha')->values(), 'ventas' => $detalleVentas];
     }
 }

@@ -355,10 +355,7 @@
     =========================================== --}}
 
     <div class="header">
-
-        <p class="header-title">
-            VENTA N° {{ $factura->numero_recibo }}
-        </p>
+        @include('partials.cabeceraDocumento', ['tituloDocumento' => 'VENTA N.º '.$factura->numero_recibo, 'compacto' => true, 'mostrarFecha' => false])
 
         <p>
             <strong>{{ $sucursal->nombre }}</strong>

@@ -84,6 +84,17 @@ class EdicionVentaTest extends TestCase
         $this->guardar($datos)->assertOk()->assertJsonPath('estado', true);
     }
 
+    public function test_recibos_y_comprobante_incluyen_el_logo_en_el_pdf(): void
+    {
+        DB::table('pagos')->update(['usuario_creador_id' => $this->usuario->id]);
+        $pagoId = DB::table('pagos')->value('id');
+        foreach (['/factura/imprimeRecibo/'.$this->venta, '/factura/imprimeReciboRollo/'.$this->venta, '/pago/comprobantePago/'.$pagoId] as $url) {
+            $respuesta = $this->get($url)->assertOk()->assertHeader('content-type', 'application/pdf');
+            $this->assertStringStartsWith('%PDF-', $respuesta->getContent());
+            $this->assertStringContainsString('/Subtype /Image', $respuesta->getContent());
+        }
+    }
+
     public function test_listado_y_modal_muestran_la_edicion_y_los_detalles(): void
     {
         $this->get('/factura/listado')->assertOk()->assertSee('modalEditarVenta');
