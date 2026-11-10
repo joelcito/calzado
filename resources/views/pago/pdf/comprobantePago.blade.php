@@ -137,6 +137,9 @@
         </div>
         <div style="text-align: end;">
             <p style="font-size: 10pt;">Vendedor: {{ $pago->usuario->name }}</p>
+            @if ($pago->duenio)
+                <p style="font-size: 10pt;">Hermano / dueño del dinero: {{ $pago->duenio->name }}</p>
+            @endif
         </div>
     </div>
     {{-- <div class="section-title">Señor(es): </div> --}}

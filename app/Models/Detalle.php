@@ -4,15 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Detalle extends Model
 {
     use HasFactory, SoftDeletes;
+
     protected $table = 'detalles';
 
     protected $fillable = [
         'usuario_creador_id',
+        'usuario_duenio_id',
         'usuario_modificador_id',
         'usuario_eliminador_id',
         'factura_id',
@@ -29,8 +32,13 @@ class Detalle extends Model
         'importe',
         'fecha',
         'estado',
-        'deleted_at'
+        'deleted_at',
     ];
+
+    public function duenio(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'usuario_duenio_id');
+    }
 
     public function factura()
     {

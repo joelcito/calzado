@@ -105,7 +105,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/verCaja', [CajaController::class, 'verCaja']);
     });
 
-    //FACTURA
+    // FACTURA
     Route::prefix('/factura')->group(function () {
         Route::get('/formulario', [FacturaController::class, 'formulario'])->name('factura.formulario');
         Route::get('/listado', [FacturaController::class, 'listado'])->name('factura.listado');
@@ -117,10 +117,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/anularRecibo', [FacturaController::class, 'anularRecibo'])->name('factura.anularRecibo');
     });
 
-    //PAGO
+    // PAGO
     Route::prefix('/pago')->group(function () {
         Route::post('/guardarTipoIngresoSalida', [PagoController::class, 'guardarTipoIngresoSalida']);
         Route::get('/listado', [PagoController::class, 'listado'])->name('pago.listado');
+        Route::get('/listadoHermanos', [PagoController::class, 'listadoHermanos'])->name('pago.listadoHermanos');
+        Route::post('/ajaxListadoHermanos', [PagoController::class, 'ajaxListadoHermanos'])->name('pago.ajaxListadoHermanos');
         Route::post('/ajaxListado', [PagoController::class, 'ajaxListado'])->name('pago.ajaxListado');
         Route::get('/listadoDeuda', [PagoController::class, 'listadoDeuda'])->name('pago.listadoDeuda');
         Route::post('/ajaxListadoDeuda', [PagoController::class, 'ajaxListadoDeuda'])->name('pago.ajaxListadoDeuda');

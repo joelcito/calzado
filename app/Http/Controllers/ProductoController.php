@@ -64,17 +64,16 @@ class ProductoController extends Controller
             //     ]);
             // }
 
-            $id = $request->input('id');
-            $nombre        = $request->input('nombre');
-            $codigo        = $request->input('codigo');
-            $precio_compra = $request->input('precio_compra');
-            $precio_venta  = $request->input('precio_venta');
-            $minimo_stock  = $request->input('minimo_stock');
-            $categoria_producto_id  = $request->input('categoria_producto_id');
-            $usuario_duenio_id  = $request->input('usuario_duenio_id');
-            $usuario       = Auth::user();
-            $tipo  = 'PRODUCTO';
-
+            $id                    = $request->input('id');
+            $nombre                = $request->input('nombre');
+            $codigo                = $request->input('codigo');
+            $precio_compra         = $request->input('precio_compra');
+            $precio_venta          = $request->input('precio_venta');
+            $minimo_stock          = $request->input('minimo_stock');
+            $categoria_producto_id = $request->input('categoria_producto_id');
+            $usuario_duenio_id     = $request->input('usuario_duenio_id');
+            $usuario               = Auth::user();
+            $tipo                  = 'PRODUCTO';
 
             if ($id == 0) {
                 /* $request->validate([
@@ -92,15 +91,15 @@ class ProductoController extends Controller
                 $producto->usuario_modificador_id = $usuario->id;
             }
 
-            $producto->nombre        = $nombre;
-            $producto->codigo        = $codigo;
-            $producto->precio_compra = $precio_compra;
-            $producto->precio_venta  = $precio_venta;
-            $producto->minimo_stock  = $minimo_stock;
-            $producto->tipo          = $tipo;
-            $producto->control_stock = true;
+            $producto->nombre                = $nombre;
+            $producto->codigo                = $codigo;
+            $producto->precio_compra         = $precio_compra;
+            $producto->precio_venta          = $precio_venta;
+            $producto->minimo_stock          = $minimo_stock;
+            $producto->tipo                  = $tipo;
+            $producto->control_stock         = true;
             $producto->categoria_producto_id = $categoria_producto_id;
-            $producto->usuario_duenio_id = $usuario_duenio_id;
+            $producto->usuario_duenio_id     = $usuario_duenio_id;
 
             // ==================== LÓGICA PARA LA IMAGEN ====================
             if ($request->hasFile('imagen_producto')) {
@@ -119,6 +118,21 @@ class ProductoController extends Controller
             // ===============================================================
 
             $producto->save();
+
+            // AGREGAMOS EL STOCK DE INGRESO
+            if($id == 0){
+                $nuevo                     = new Movimiento();
+                $nuevo->usuario_creador_id = $usuario->id;
+                $nuevo->producto_id        = $producto->id;
+                $nuevo->sucursal_id        = $usuario->sucursal_id;
+                $nuevo->ingreso            = 1000000;
+                $nuevo->salida             = 0;
+                $nuevo->fecha              = date('Y-m-d H:i:s');
+                $nuevo->descripcion        = "INGRESO AUTOMATICO";
+                $nuevo->precio_compra      = $precio_compra;
+                $nuevo->precio_venta       = $precio_venta;
+                $nuevo->save();
+            }
 
             $data = Respuesta::success(null, "Datos obtenidos correctamente");
         } else {

@@ -12,66 +12,7 @@
 @endsection
 @section('content')
 
-    <!--begin::Modal - Add task-->
-    <div class="modal fade" id="modalIngreso" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="fw-bold">Formulario de <span id="text_tipoo_modal" class="text-info"></span></h2>
-                </div>
-                <div class="modal-body scroll-y">
-                    <form id="formularioIngresoSalida">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Categoria</label>
-                                    <select class="form-select form-select-sm" name="categoria_id" id="categoria_id" onchange="sacarSubCategorias()"></select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="fv-row mb-7">
-                                    <label class="fw-semibold fs-6 mb-2 required">Tipo Pago</label>
-                                    <select name="tipo_pago" id="tipo_pago" class="form-control form-control-sm" required>
-                                        <option value="">Seleccione</option>
-                                        <option value="EFECTIVO">EFECTIVO</option>
-                                        <option value="TRANSFERENCIA">TRANSFERENCIA</option>
-                                        <option value="QR">QR</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Monto</label>
-                                    <input type="number" id="monto" name="monto" class="form-control form-control-solid mb-3 mb-lg-0" min="0.1"
-                                        step="0.01" value="0" required onclick="this.select()">
-                                    <input type="hidden" id="tipo" name="tipo" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Descripcion</label>
-                                    <input type="text" id="descripcion" name="descripcion"
-                                        class="form-control form-control-solid mb-3 mb-lg-0">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button class="btn btn-success w-100" id="boton-agrega-sale-dinero" onclick="guardarTipoIngresoSalida()">Guardar</button>
-                        </div>
-                    </div>
-                </div>
-                <!--end::Modal body-->
-            </div>
-            <!--end::Modal content-->
-        </div>
-        <!--end::Modal dialog-->
-    </div>
-    <!--end::Modal - Add task-->
+    @include('pago.components.formularioIngresoSalida')
 
     <!--begin::Modal - Add task-->
     <div class="modal fade" id="modalAperturaCaja" tabindex="-1" aria-hidden="true">
@@ -257,56 +198,6 @@
             $('#modalRol').modal('show')
         }
 
-        function modalIngresoSalida(tipo) {
-            $('#tipo').val(tipo)
-            $('#text_tipoo_modal').text(tipo)
-            $('#monto').val(0)
-            $('#descripcion').val('')
-
-            let categoriasIngreso = (tipo === "INGRESO") ? @json($categoriasIngreso) : @json($categoriasSalida);
-
-            $('#categoria_id').empty();
-            $('#categoria_id').append('<option value="">Seleccione</option>');
-
-            categoriasIngreso.forEach(c => {
-                $('#categoria_id').append(
-                    `<option value="${c.id}">${c.nombre}</option>`
-                );
-            })
-
-            $("#boton-agrega-sale-dinero").prop("disabled", false).html('Guardar');
-
-            $('#modalIngreso').modal('show')
-        }
-
-        function guardarTipoIngresoSalida() {
-            $("#boton-agrega-sale-dinero").prop("disabled", true)            .html('<span class="spinner-border spinner-border-sm"></span> Procesando...');
-            if ($("#formularioIngresoSalida")[0].checkValidity()) {
-                datos = $("#formularioIngresoSalida").serializeArray()
-                $.ajax({
-                    url: "{{ url('pago/guardarTipoIngresoSalida') }}",
-                    data: datos,
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function(data) {
-                        if (data.estado) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Se registro con exito',
-                                showConfirmButton: false, // No mostrar botón de confirmación
-                                timer: 2000, // 5 segundos
-                                timerProgressBar: true
-                            });
-                            $('#modalIngreso').modal('hide')
-                            ajaxListado();
-                        }
-                    }
-                });
-            } else {
-                $("#formularioIngresoSalida")[0].reportValidity()
-            }
-        }
-
         function ajaxDescargarReportePago(){
             let datos = $('#formulario_busqueda').serializeArray();
             $.ajax({
@@ -447,4 +338,5 @@
         }
 
     </script>
+    @include('pago.components.ingresoSalidaJs')
 @endsection

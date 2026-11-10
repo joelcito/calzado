@@ -268,6 +268,12 @@
                                     <span class="menu-title text-white">Ventas del Dia</span>
                                 </a>
                             </div>
+                            <div class="menu-item">
+                                <a class="menu-link {{ Route::currentRouteName() == 'pago.listadoHermanos' ? 'active' : '' }}" href="{{ route('pago.listadoHermanos') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title text-white">Ingresos y salidas por hermano</span>
+                                </a>
+                            </div>
 
 
                         </div>
