@@ -22,6 +22,8 @@ return new class extends Migration
 
             $table->foreign('categoria_producto_id')->references('id')->on('categoria_productos');
             $table->unsignedBigInteger('categoria_producto_id')->nullable();
+            $table->foreign('usuario_duenio_id')->references('id')->on('users');
+            $table->unsignedBigInteger('usuario_duenio_id')->nullable();
 
             $table->string('nombre')->nullable();
             $table->string('codigo')->nullable();

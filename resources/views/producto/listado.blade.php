@@ -26,7 +26,7 @@
                         <div class="row">
                             <div class="col-md">
                                 <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Categoria</label>
+                                    <label class="fw-semibold fs-6 mb-2">Categoria</label>
                                     <select class="form-select form-select-sm" name="categoria_producto_id" id="categoria_producto_id">
                                         <option>Seleccione</option>
                                         @foreach ( $categorias as $categoria)
@@ -34,6 +34,18 @@
                                         @endforeach
                                     </select>
                                     <div class="text-danger error-message" id="error-categoria_producto_id"></div>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Dueño</label>
+                                    <select class="form-select form-select-sm" name="usuario_duenio_id" id="usuario_duenio_id">
+                                        <option>Seleccione</option>
+                                        @foreach ( $usuarios as $usuario)
+                                            <option value="{{$usuario->id}}">{{$usuario->nombres." ".$usuario->ap_paterno." ".$usuario->ap_materno}}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="text-danger error-message" id="error-usuario_duenio_id"></div>
                                 </div>
                             </div>
                             <div class="col-md">
@@ -82,14 +94,14 @@
                                     <div class="text-danger error-message" id="error-precio_venta"></div>
                                 </div>
                             </div>
-                            <div class="col-md">
+                            {{-- <div class="col-md">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Minimo Stock</label>
                                     <input type="text" class="form-control form-control-sm" id="minimo_stock"
                                         name="minimo_stock">
                                     <div class="text-danger error-message" id="error-minimo_stock"></div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row">
                             <div class="col-md">
@@ -755,6 +767,7 @@
             $('#minimo_stock').val('');
             $('#tipo').val('');
             $('#categoria_producto_id').val('');
+            $('#usuario_duenio_id').val('');
 
             $('#modalProducto').modal('show')
         }

@@ -115,6 +115,8 @@ class FacturaController extends Controller
                 $monto_total_pagado  = (float)$request->input('monto_total_pagado');
                 $monto_pagado        = (float)$request->input('monto_pagado');
                 $descripcion         = $request->input('descripcion');
+                $tipo_pago_pagado_2  = $request->input('tipo_pago_pagado_2');
+                $monto_pagado_2      = $request->input('monto_pagado_2');
 
                 $cliente        = Cliente::with('sucursal')->find($cliente_id);
                 $sucursal_objeto     = $usuario->sucursal;
@@ -148,6 +150,13 @@ class FacturaController extends Controller
                 //     $data['text'] = 'EL MONTO PROPORCIONADO EXEDE AL MONTO DE LA VENTA';
                 //     return $data;
                 // }
+
+                // AQUI ES PARA QUE PAGUE TOTAL O SOLO UN PAGO
+                if(($monto_pagado + $monto_pagado_2) > $monto_total){
+                    $data['estado'] = false;
+                    $data['text'] = 'EL MONTO PROPORCIONADO EXEDE AL MONTO DE LA VENTA';
+                    return $data;
+                }
 
                 $idDetalles = array();
                 $esTransporte = false;
@@ -243,11 +252,28 @@ class FacturaController extends Controller
                     $pago->factura_id         = $facturaVerdad->id;
                     $pago->sucursal_id        = $sucursal_id;
                     $pago->caja_id            = $cajaAbierta->id;
-                    $pago->monto              = ($monto_pagado >= $monto_total) ? $monto_total : $monto_pagado;
+                    // $pago->monto              = ($monto_pagado >= $monto_total) ? $monto_total : $monto_pagado;
+                    $pago->monto              = $monto_pagado;
                     $pago->fecha              = $facturaVerdad->fecha;
                     $pago->descripcion        = 'VENTA';
                     $pago->apertura_caja      = 'No';
                     $pago->tipo_pago          = $tipo_pago_pagado;
+                    $pago->estado             = 'INGRESO';
+                    $pago->save();
+                }
+
+                // PARA EL PAGO 2
+                if(!is_null($tipo_pago_pagado_2) && $monto_pagado_2 > 0){
+                    $pago                     = new Pago();
+                    $pago->usuario_creador_id = $usuario->id;
+                    $pago->factura_id         = $facturaVerdad->id;
+                    $pago->sucursal_id        = $sucursal_id;
+                    $pago->caja_id            = $cajaAbierta->id;
+                    $pago->monto              = $monto_pagado_2;
+                    $pago->fecha              = $facturaVerdad->fecha;
+                    $pago->descripcion        = 'VENTA';
+                    $pago->apertura_caja      = 'No';
+                    $pago->tipo_pago          = $tipo_pago_pagado_2;
                     $pago->estado             = 'INGRESO';
                     $pago->save();
                 }

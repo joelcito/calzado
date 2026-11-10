@@ -16,6 +16,7 @@ class Producto extends Model
         'usuario_modificador_id',
         'usuario_eliminador_id',
         'categoria_producto_id',
+        'usuario_duenio_id',
         'nombre',
         'codigo',
         'minimo_stock',
@@ -30,5 +31,10 @@ class Producto extends Model
     public function movimientos()
     {
         return $this->hasMany(Movimiento::class);
+    }
+
+    public function duenio()
+    {
+        return $this->belongsTo(User::class, 'usuario_duenio_id');
     }
 }

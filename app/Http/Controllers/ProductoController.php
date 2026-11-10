@@ -6,6 +6,7 @@ use App\Models\CategoriaProducto;
 use App\Models\Movimiento;
 use App\Models\Producto;
 use App\Models\Sucursal;
+use App\Models\User;
 use App\Utils\Respuesta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,8 +19,9 @@ class ProductoController extends Controller
     {
         $sucursales = Sucursal::all();
         $categorias = CategoriaProducto::all();
+        $usuarios = User::all();
 
-        return view('producto.listado')->with(compact(['sucursales', 'categorias']));
+        return view('producto.listado')->with(compact(['sucursales', 'categorias', 'usuarios']));
     }
 
     public function ajaxListado(Request $request)
@@ -50,7 +52,8 @@ class ProductoController extends Controller
                 //'codigo' => 'required|unique:productos,codigo',
                 'precio_compra' => 'required',
                 'precio_venta'  => 'required',
-                'minimo_stock'  => 'required',
+                // 'minimo_stock'  => 'required',
+                'usuario_duenio_id'  => 'required',
                 // 'tipo' => 'required',
             ]);
 
@@ -68,6 +71,7 @@ class ProductoController extends Controller
             $precio_venta  = $request->input('precio_venta');
             $minimo_stock  = $request->input('minimo_stock');
             $categoria_producto_id  = $request->input('categoria_producto_id');
+            $usuario_duenio_id  = $request->input('usuario_duenio_id');
             $usuario       = Auth::user();
             $tipo  = 'PRODUCTO';
 
@@ -96,6 +100,7 @@ class ProductoController extends Controller
             $producto->tipo          = $tipo;
             $producto->control_stock = true;
             $producto->categoria_producto_id = $categoria_producto_id;
+            $producto->usuario_duenio_id = $usuario_duenio_id;
 
             // ==================== LÓGICA PARA LA IMAGEN ====================
             if ($request->hasFile('imagen_producto')) {

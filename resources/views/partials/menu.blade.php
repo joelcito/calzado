@@ -222,7 +222,7 @@
                         </span>
                         <!--end:Menu link-->
                         <div class="menu-sub menu-sub-accordion">
-                            <div class="menu-item">
+                            {{-- <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'caja.listado' ? 'active' : '' }}"
                                     href="{{ route('caja.listado') }}">
                                     <span class="menu-bullet">
@@ -230,7 +230,7 @@
                                     </span>
                                     <span class="menu-title text-white">Cajas del Dia</span>
                                 </a>
-                            </div>
+                            </div> --}}
 
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'factura.formulario' ? 'active' : '' }}" href="{{ url('factura/formulario') }}">

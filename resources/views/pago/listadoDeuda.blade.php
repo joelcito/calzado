@@ -209,6 +209,7 @@
                 success: function (resultado) {
                     if(resultado.estado){
                         $('#formulario_deuda').html(resultado.data.formulario)
+                        $('#botonGuardarPagoDeuda').attr('disabled', false);
                         $('#modalDeuda').modal('show')
                     }
                 }
@@ -237,7 +238,7 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: JSON.stringify(resultado.data),
+                            text: JSON.stringify(resultado),
                         });
                     }
                 },

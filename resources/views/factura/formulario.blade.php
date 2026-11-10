@@ -338,7 +338,7 @@
                                                             value="0">
                                                     </div>
                                                 </div>
-                                                {{-- <div class="row">
+                                                <div class="row">
                                                     <div class="col-md-4">
                                                         <label class="">Tipo Pago 2</label>
                                                         <select name="tipo_pago_pagado_recibo_2" id="tipo_pago_pagado_recibo_2" class="form-control form-control-sm" onchange="validarCamposRecibo2()">
@@ -352,7 +352,7 @@
                                                             id="monto_pagado_recibo_2" name="monto_pagado_recibo_2" value="0"
                                                             onkeyup="caluclarCambioRecibo2(this)">
                                                     </div>
-                                                </div> --}}
+                                                </div>
                                             </form>
                                             <div class="row mt-3">
                                                 <div class="col-md">

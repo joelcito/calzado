@@ -3,19 +3,20 @@
     <table class="table align-middle table-row-dashed fs-7 gy-5" id="kt_table_productos">
         <thead>
             <tr class="text-start text-muted fw-bold fs-8 text-uppercase gs-0">
+                <th>Dueño</th>
                 <th>Imagen</th>
                 <th>Codigo</th>
-                <th>Tipo</th>
                 <th>Nombre</th>
                 <th>Precio Compra</th>
                 <th>Precio Venta</th>
-                <th>Minimo Stock</th>
+                {{-- <th>Minimo Stock</th> --}}
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
             @forelse ( $productos as $prod)
                 <tr>
+                    <td>{{$prod->duenio?->nombres." ".$prod->duenio?->ap_paterno." ".$prod->duenio?->ap_materno }}</td>
                     <td class="text-center align-middle">
                         @if($prod->imagen && Storage::disk('public')->exists($prod->imagen))
                         <img src="{{ asset('storage/' . $prod->imagen) }}" alt="{{ $prod->nombre }}" class="rounded"
@@ -26,17 +27,10 @@
                         @endif
                     </td>
                     <td>{{ $prod->codigo }}</td>
-                    <td>
-                        @if ($prod->tipo == 'PETSHOP')
-                            <small class="badge badge-success">{{ $prod->tipo }}</small>
-                        @elseif($prod->tipo == 'PROPIO')
-                            <small class="badge badge-info">{{ $prod->tipo }}</small>
-                        @endif
-                    </td>
                     <td>{{ $prod->nombre }}</td>
                     <td>{{ $prod->precio_compra }}</td>
                     <td>{{ $prod->precio_venta }}</td>
-                    <td>{{ $prod->minimo_stock }}</td>
+                    {{-- <td>{{ $prod->minimo_stock }}</td> --}}
                     <td>
                         <div class="btn-group">
                             <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-bs-toggle="dropdown"
@@ -44,7 +38,7 @@
                                 Opciones
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
-                                <li><button class="dropdown-item" type="button" onclick="adicionarStockSucursal({{ json_encode($prod) }})"><i class="fa fa-calendar-plus"></i> Stock-Sucursal</button></li>
+                                {{-- <li><button class="dropdown-item" type="button" onclick="adicionarStockSucursal({{ json_encode($prod) }})"><i class="fa fa-calendar-plus"></i> Stock-Sucursal</button></li> --}}
                                 @rol(1)
                                 {{-- <li><button class="dropdown-item" type="button" onclick="transferenciaSucursal({{ json_encode($prod) }})"><i class="fa fa-arrow-right"></i> Transferencia</button></li> --}}
                                 <li><button class="dropdown-item" type="button" onclick="editarProducto({{ json_encode($prod) }})"><i class="fa fa-edit"></i> Editar</button></li>
