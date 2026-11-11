@@ -797,7 +797,7 @@
                         ajaxListado();
                         $('#modalProducto').modal('hide')
                     } else {
-
+                        $('#btn-guardar').attr('disabled', false);
                     }
                 },
                 error: function(xhr) {
@@ -821,6 +821,7 @@
                             text: 'Ocurrió un error inesperado.',
                         });
                     }
+                    $('#btn-guardar').attr('disabled', false);
                 }
             });
         }
