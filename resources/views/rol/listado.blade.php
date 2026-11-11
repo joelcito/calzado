@@ -63,9 +63,9 @@
                 <div class="card-header flex-wrap bg-light-info py-4">
                     <h3 class="card-title page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
                             LISTADO DE ROLES</h3>
-                    {{-- <div class="card-toolbar">
+                    <div class="card-toolbar">
                         <a class="btn btn-sm fw-bold btn-primary" onclick="modalNuevoRol()"><i class="fa fa-plus"></i>Nuevo Rol</a>
-                    </div> --}}
+                    </div>
                 </div>
 
                 <div class="card-body py-4">

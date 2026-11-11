@@ -12,6 +12,7 @@ use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,7 +20,8 @@ Route::get('/', function () {
     return redirect('home');
 });
 
-Auth::routes();
+// Auth::routes();
+Auth::routes(['register' => false]);
 
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
