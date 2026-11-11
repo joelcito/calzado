@@ -11,6 +11,7 @@ use App\Utils\Respuesta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
@@ -118,6 +119,10 @@ class ProductoController extends Controller
             }
             // ===============================================================
 
+            Log::info('DEBUG GUARDAR PRODUCTO', [
+                'categoria_recibida' => $request->input('categoria_producto_id'),
+                'categoria_guardada' => $producto->categoria_producto_id,
+            ]);
             $producto->save();
 
             // AGREGAMOS EL STOCK DE INGRESO
