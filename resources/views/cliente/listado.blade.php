@@ -46,7 +46,7 @@
                     <div class="row mt-3">
                         <div class="col-md-4">
                             <div class="fv-row mb-7">
-                                <label class="required fw-semibold fs-6 mb-2">Cedula</label>
+                                <label class="fw-semibold fs-6 mb-2">Cedula</label>
                                 <input type="text" class="form-control form-control-sm" id="cedula" name="cedula">
                             </div>
                         </div>
