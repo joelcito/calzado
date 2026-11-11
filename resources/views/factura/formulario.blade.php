@@ -124,8 +124,7 @@
                                         Formulario de Venta</h1>
                                 </div>
                                 <div class="col-md-2">
-                                    <a class="btn btn-sm fw-bold btn-danger w-100" onclick="modalCerrarCaja()"><i
-                                            class="fa fa-plus"></i>Cerrar Caja</a>
+                                    {{-- <a class="btn btn-sm fw-bold btn-danger w-100" onclick="modalCerrarCaja()"><i class="fa fa-plus"></i>Cerrar Caja</a> --}}
                                 </div>
                             </div>
                             <hr>
