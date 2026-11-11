@@ -55,6 +55,7 @@ class ProductoController extends Controller
                 // 'minimo_stock'  => 'required',
                 'usuario_duenio_id'  => 'required',
                 // 'tipo' => 'required',
+                'categoria_producto_id' => 'nullable|integer|exists:categoria_productos,id',
             ]);
 
 
@@ -70,7 +71,7 @@ class ProductoController extends Controller
             $precio_compra         = $request->input('precio_compra');
             $precio_venta          = $request->input('precio_venta');
             $minimo_stock          = $request->input('minimo_stock');
-            $categoria_producto_id = $request->input('categoria_producto_id');
+            $categoria_producto_id = $request->filled('categoria_producto_id') ? $request->input('categoria_producto_id') : null;
             $usuario_duenio_id     = $request->input('usuario_duenio_id');
             $usuario               = Auth::user();
             $tipo                  = 'PRODUCTO';

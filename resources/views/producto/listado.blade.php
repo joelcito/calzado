@@ -28,7 +28,7 @@
                                 <div class="fv-row mb-7">
                                     <label class="fw-semibold fs-6 mb-2">Categoria</label>
                                     <select class="form-select form-select-sm" name="categoria_producto_id" id="categoria_producto_id">
-                                        <option>Seleccione</option>
+                                        <option value="">Seleccione</option>
                                         @foreach ( $categorias as $categoria)
                                             <option value="{{$categoria->id}}">{{$categoria->nombre}}</option>
                                         @endforeach
@@ -40,7 +40,7 @@
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Dueño</label>
                                     <select class="form-select form-select-sm" name="usuario_duenio_id" id="usuario_duenio_id">
-                                        <option>Seleccione</option>
+                                        <option value="">Seleccione</option>
                                         @foreach ( $usuarios as $usuario)
                                             <option value="{{$usuario->id}}">{{$usuario->nombres." ".$usuario->ap_paterno." ".$usuario->ap_materno}}</option>
                                         @endforeach
