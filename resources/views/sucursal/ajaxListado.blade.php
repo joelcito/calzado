@@ -18,7 +18,7 @@
                     <td>
                         {{-- @rol(1) --}}
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar rol" onclick="editarSucursal({{ json_encode($sucursal) }})"><i class="fa fa-edit"></i></button>
-                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar rol" onclick="eliminarSucursal({{ json_encode($sucursal) }})"><i class="fa fa-trash"></i></button>
+                        {{-- <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar rol" onclick="eliminarSucursal({{ json_encode($sucursal) }})"><i class="fa fa-trash"></i></button> --}}
                         {{-- @endrol --}}
                     </td>
                 </tr>
