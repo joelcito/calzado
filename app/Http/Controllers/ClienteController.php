@@ -38,7 +38,7 @@ class ClienteController extends Controller
                 // 'direccion'        => 'required',
                 'ap_paterno'     => 'required',
                 //'ap_materno'     => 'required',
-                'cedula'         => 'required',
+                // 'cedula'         => 'required',
                 /* 'complemento'    => 'required',
                 'nit'            => 'required',
                 'razon_social'   => 'required',
