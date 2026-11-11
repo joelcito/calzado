@@ -650,7 +650,7 @@
                                     <a class="btn btn-sm fw-bold btn-danger ml-5" onclick="modalProductoMasivo()"><i class="fa fa-upload"></i>Registro Masivo</a>
                                 </div> --}}
                             </div>
-                            <a class="btn btn-sm fw-bold btn-success my-2" onclick="modalIngresoStockMasivo()"> <i class="fa fa-boxes"></i> Ingreso Stock Masivo</a>
+                            {{-- <a class="btn btn-sm fw-bold btn-success my-2" onclick="modalIngresoStockMasivo()"> <i class="fa fa-boxes"></i> Ingreso Stock Masivo</a> --}}
                             <a class="btn btn-sm fw-bold btn-primary my-2" onclick="modalNuevoProducto()"><i class="fa fa-plus"></i>Nuevo</a>
                             {{-- <a class="btn btn-sm fw-bold btn-danger" href="{{ route('producto.pdfProductoStock') }}" target="_blank">Imprimir Productos</a> --}}
                         </div>
