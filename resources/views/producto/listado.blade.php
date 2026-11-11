@@ -116,7 +116,7 @@
                 <div class="modal-footer">
                     <div class="row">
                         <div class="col-md-12">
-                            <button class="btn btn-sm w-100 btn-success" onclick="guardarProducto()">Guardar</button>
+                            <button class="btn btn-sm w-100 btn-success" id="btn-guardar" onclick="guardarProducto()">Guardar</button>
                         </div>
                     </div>
                 </div>
@@ -768,6 +768,7 @@
             $('#tipo').val('');
             $('#categoria_producto_id').val('');
             $('#usuario_duenio_id').val('');
+            $('#btn-guardar').attr('disabled', false);
 
             $('#modalProducto').modal('show')
         }
@@ -776,6 +777,7 @@
 
             let formulario = $('#formularioProducto')[0];
             let datos = new FormData(formulario); // Aquí usamos FormData
+            $('#btn-guardar').attr('disabled', true);
 
             // let datos = $('#formularioProducto').serializeArray();
             $.ajax({
