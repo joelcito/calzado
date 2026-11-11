@@ -14,7 +14,7 @@
         <!--begin::Mobile logo-->
         <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
             <a href="{{ url('home') }}" class="d-lg-none">
-                <img alt="Logo" src="{{asset('assets/img/lop.jpg')}}" class="h-40px app-sidebar-logo-minimize" width="100%" />
+                <img alt="Logo" src="{{asset('assets/img/logo_calzado.png')}}" class="h-40px app-sidebar-logo-minimize" width="100%" />
             </a>
         </div>
         <!--end::Mobile logo-->
