@@ -78,7 +78,7 @@
                 emptyTable: 'No hay datos disponibles'
             },
             order:[],
-            searching: false,
+            searching: true,
             responsive: false
         });
 

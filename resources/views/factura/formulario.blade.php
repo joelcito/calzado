@@ -159,11 +159,11 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-2" id="div_control_stock">
-                                                            <label class="required fw-semibold fs-6 mb-2">Stock en Sucursal</label>
-                                                            <input type="text" class="form-control form-control-sm"
+                                                        {{-- <div class="col-md-2" id="div_control_stock"> --}}
+                                                            {{-- <label class="required fw-semibold fs-6 mb-2">Stock en Sucursal</label> --}}
+                                                            <input type="hidden" class="form-control form-control-sm"
                                                                 id="stock_sucursal" name="stock_sucursal" required readonly>
-                                                        </div>
+                                                        {{-- </div> --}}
                                                         <div class="col-md-2">
                                                             <label class="required fw-semibold fs-6 mb-2">Precio</label>
                                                             <input type="text" class="form-control form-control-sm" id="precio_venta" onclick="this.value='';" name="precio_venta" onchange="calcularPrecioTotal()" required>
