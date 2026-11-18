@@ -52,6 +52,36 @@ class EdicionVentaTest extends TestCase
         $this->actingAs($this->usuario);
     }
 
+    public function test_recibo_imagen_muestra_la_venta_sin_generar_pdf(): void
+    {
+        $this->get(route('factura.reciboImagen', ['factura_id' => $this->venta]))
+            ->assertOk()
+            ->assertHeader('content-type', 'text/html; charset=utf-8')
+            ->assertViewIs('factura.reciboImagen')
+            ->assertSee('Descargar imagen')
+            ->assertSee('WhatsApp')
+            ->assertSee('Zapato Joel')
+            ->assertSee('SALDO PENDIENTE:')
+            ->assertSee('Bs 100.00')
+            ->assertSee('base64,', false)
+            ->assertSee('DETALLE')
+            ->assertSee('PRECIO')
+            ->assertSee('CANT.');
+    }
+
+    public function test_recibo_imagen_requiere_autenticacion(): void
+    {
+        auth()->logout();
+
+        $this->get(route('factura.reciboImagen', ['factura_id' => $this->venta]))
+            ->assertRedirect(route('login'));
+    }
+
+    public function test_recibo_imagen_inexistente_devuelve_404(): void
+    {
+        $this->get(route('factura.reciboImagen', ['factura_id' => 999999]))->assertNotFound();
+    }
+
     private function formulario(): array
     {
         $respuesta = $this->postJson('/factura/ajaxFormularioEditarVenta', ['factura_id' => $this->venta], ['X-Requested-With' => 'XMLHttpRequest'])->assertOk()->assertJsonPath('estado', true);

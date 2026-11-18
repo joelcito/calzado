@@ -153,7 +153,7 @@
                                                             <div class="row">
                                                                 <div class="col-md">
                                                                     <label class="required fw-semibold fs-6 mb-2">Cantidad</label>
-                                                                    <input type="text" class="form-control form-control-sm"
+                                                                    <input type="number" class="form-control form-control-sm"
                                                                         id="cantidad_venta" name="cantidad_venta" required
                                                                         onchange="calcularPrecioTotal()" onclick="this.select();">
                                                                 </div>
@@ -166,7 +166,7 @@
                                                         {{-- </div> --}}
                                                         <div class="col-md-2">
                                                             <label class="required fw-semibold fs-6 mb-2">Precio</label>
-                                                            <input type="text" class="form-control form-control-sm" id="precio_venta" onclick="this.value='';" name="precio_venta" onchange="calcularPrecioTotal()" required>
+                                                            <input type="number" class="form-control form-control-sm" id="precio_venta" onclick="this.select();" name="precio_venta" onchange="calcularPrecioTotal()" required step="any">
                                                         </div>
                                                         <div class="col-md-2">
                                                             <label class="required fw-semibold fs-6 mb-2">Total</label>
@@ -1470,9 +1470,7 @@
                                         timer: 3000
                                     })
                                     if (data.data.numero != null && data.data.numero != '') {
-                                        window.open("{{ url('factura/imprimeReciboRollo') }}/" + data.data.numero,
-                                            "_blank", "width=800,height=600");
-                                        window.location.reload();
+                                        window.location.href = @json(route('factura.reciboImagen', ['factura_id' => '__ID__'])).replace('__ID__', encodeURIComponent(data.data.numero));
                                     } else {
                                         window.location.href = "{{ url('factura/listado') }}"
                                     }

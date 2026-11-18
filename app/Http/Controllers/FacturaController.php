@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class FacturaController extends Controller
@@ -324,6 +325,13 @@ class FacturaController extends Controller
         } else {
             throw new NotFoundHttpException;
         }
+    }
+
+    public function reciboImagen(int $factura_id): View
+    {
+        $factura = Factura::with('detalles.producto', 'sucursal', 'cliente', 'vendedor', 'pagos')->findOrFail($factura_id);
+
+        return view('factura.reciboImagen', compact('factura'));
     }
 
     public function imprimeReciboRollo(Request $request, $factura_id)

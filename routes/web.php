@@ -118,6 +118,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/guardarEdicionVenta', [FacturaController::class, 'guardarEdicionVenta'])->name('factura.guardarEdicionVenta');
         Route::get('/imprimeRecibo/{factura_id}', [FacturaController::class, 'imprimeRecibo']);
         Route::get('/imprimeReciboRollo/{factura_id}', [FacturaController::class, 'imprimeReciboRollo']);
+        Route::get('/reciboImagen/{factura_id}', [FacturaController::class, 'reciboImagen'])->name('factura.reciboImagen');
         Route::post('/anularRecibo', [FacturaController::class, 'anularRecibo'])->name('factura.anularRecibo');
     });
 
