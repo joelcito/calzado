@@ -46,8 +46,8 @@
                     </td>
                     <td>
                         <a href="{{ route('factura.reciboImagen', ['factura_id' => $fac->id]) }}"
-                            class="btn btn-success btn-sm" title="Descargar o compartir recibo por WhatsApp">
-                            <i class="fa fa-image" aria-hidden="true"></i> Recibo imagen
+                            class="btn btn-success btn-sm tamanio_boton btn-icon" title="Descargar o compartir recibo por WhatsApp">
+                            <i class="fa fa-image" aria-hidden="true"></i>
                         </a>
                         <a href="{{ url('factura/imprimeRecibo', [$fac->id]) }}" target="_blank"
                             class="btn btn-info btn-sm btn-icon tamanio_boton" title="Imprime Recibo"><i
